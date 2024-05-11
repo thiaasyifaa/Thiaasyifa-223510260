@@ -8,17 +8,24 @@
           <th>Activity</th>
           <th>Date</th>
           <th>Completed</th>
-          <th>Other</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(activity, index) in filteredActivities" :key="index">
-          <td>{{ activity.name }}</td>
-          <td>{{ activity.date }}</td>
+        <tr v-for="(activity, index) in activities" :key="index">
+          <td v-if="activity.editing">
+            <input type="text" v-model="activity.name">
+          </td>
+          <td v-else>{{ activity.name }}</td>
+          <td v-if="activity.editing">
+            <input type="text" v-model="activity.date">
+          </td>
+          <td v-else>{{ activity.date }}</td>
           <td>
             <input type="checkbox" v-model="activity.completed" @change="toggleCompletion(index)">
           </td>
           <td>
+            <button @click="activity.editing = !activity.editing">{{ activity.editing ? 'Save' : 'Edit' }}</button>
             <button @click="removeActivity(index)">Cancel</button>
           </td>
         </tr>
@@ -33,11 +40,6 @@ export default {
     activities: {
       type: Array,
       default: () => []
-    }
-  },
-  computed: {
-    filteredActivities() {
-      return this.activities.filter(activity => !activity.completed);
     }
   },
   methods: {
